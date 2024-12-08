@@ -106,8 +106,12 @@ class ChirpController extends Controller
      * @param  \App\Models\chirp  $chirp
      * @return \Illuminate\Http\Response
      */
-    public function destroy(chirp $chirp)
+    public function destroy(chirp $chirp):RedirectResponse
     {
-        //
+        Gate::authorize('delete', $chirp);
+
+        $chirp->delete();
+
+        return redirect(route('chirps.index'));
     }
 }
