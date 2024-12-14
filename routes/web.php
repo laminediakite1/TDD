@@ -2,7 +2,7 @@
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\LikeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,5 +32,8 @@ Route::resource('chirps' , ChirpController::class)
     ->only(['index','store','edit','update','destroy'])
     ->middleware(['auth','verified']);
 
+Route::post('/chirps/{chirp}/like', [LikeController::class, 'like'])
+->middleware('auth')
+->name('chirps.like');
 
 require __DIR__.'/auth.php';

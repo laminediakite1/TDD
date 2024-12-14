@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\JsonResponse;
 use illuminate\Http\Response;
 use App\Models\chirp;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Carbon;
+
 
 
 class ChirpController extends Controller
@@ -18,6 +21,12 @@ class ChirpController extends Controller
      */
    
     public function index(): View{
+
+        $chirps = Chirp::with('user')
+        ->where('created_at', '>=', Carbon::now()->subDays(7)) // Filtrer les chirps créés dans les 7 derniers jours
+        ->latest()
+        ->get();
+
 
         return view('chirps.index',
     ['chirps' => Chirp::with('user')->latest()->get(),
@@ -41,15 +50,23 @@ class ChirpController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
+
+         // Vérifie si l'utilisateur a déjà 10 "chirps"
+    if ($request->user()->chirps()->count() >= 10) {
+        return response()->json(['error' => 'Vous avez atteint le nombre maximum de chirps (10).'], 400);
+    }
         $validated = $request->validate([
             'message'=> 'required|string|max:255',
         ]);
 
         $request->user()->chirps()->create($validated);
 
-        return redirect(route('chirps.index'));
+       //return redirect(route('chirps.index'));
+       return response()->json(['message' => 'Chirp created!'], 201);
+
+       
     }
 
     /**

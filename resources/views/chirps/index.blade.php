@@ -6,7 +6,7 @@
             @csrf
             <textarea 
                 name="message" 
-                placeholder="{{ __('What\'s your mind?') }}"
+                placeholder="{{ __('What\'s on your mind?') }}"
                 class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo200 focus:ring-opacity-50 rounded-md shadow-sm"
             >{{ old('message') }}</textarea>
             <x-input-error :messages="$errors->get('message')" class="mt-2"/>
@@ -54,6 +54,13 @@
                             @endif
                         </div>
                         <p class="mt-4 text-lg text-gray-900">{{ $chirp->message }}</p>
+                        <!-- Bouton Like -->
+                        <form method="POST" action="{{ route('chirps.like', $chirp) }}" class="mt-4">
+                            @csrf
+                            <button type="submit" class="text-blue-500 hover:text-blue-700">
+                                ❤️ Like ({{ $chirp->likes()->count() }})
+                            </button>
+                        </form>
                     </div>
                 </div>
             @endforeach

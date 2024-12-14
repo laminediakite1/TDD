@@ -11,7 +11,7 @@ class chirp extends Model
     use HasFactory;
 
     protected $fillable = [
-        'message',
+        'message','user_id'
     ]; 
 
 
@@ -24,4 +24,8 @@ class chirp extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function likes()
+{
+    return $this->belongsToMany(User::class, 'likes');
+}
 }
